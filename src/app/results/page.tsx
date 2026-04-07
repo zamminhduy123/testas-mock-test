@@ -1,27 +1,30 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useExamStore } from '@/lib/store/exam-store';
-import { createClient } from '@/lib/supabase/client';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { SECTION_TYPE_LABELS } from '@/lib/constants';
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useExamStore } from "@/lib/store/exam-store";
+import { createClient } from "@/lib/supabase/client";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { SECTION_TYPE_LABELS } from "@/lib/constants";
 import {
-  GraduationCap, Trophy, BarChart3, Clock,
-  CheckCircle2, XCircle, RotateCcw, Home
-} from 'lucide-react';
+  GraduationCap,
+  Trophy,
+  BarChart3,
+  Clock,
+  CheckCircle2,
+  XCircle,
+  RotateCcw,
+  Home,
+  Mail,
+  Info,
+} from "lucide-react";
 
 export default function ResultsPage() {
   const router = useRouter();
   const [hydrated, setHydrated] = useState(false);
-  const {
-    sections,
-    answers,
-    currentExamId,
-    userExamId,
-    resetExam,
-  } = useExamStore();
+  const { sections, answers, currentExamId, userExamId, resetExam } =
+    useExamStore();
   const supabase = createClient();
 
   useEffect(() => {
@@ -31,7 +34,7 @@ export default function ResultsPage() {
   // Safe redirect hook
   useEffect(() => {
     if (hydrated && !currentExamId) {
-      router.push('/dashboard');
+      router.push("/dashboard");
     }
   }, [hydrated, currentExamId, router]);
 
@@ -41,7 +44,9 @@ export default function ResultsPage() {
     const answeredCount = Object.keys(sectionAnswers).length;
     // In a real app, we'd compare against correct_answer from the DB
     // For mock, we'll simulate a random score
-    const correctCount = Math.floor(answeredCount * 0.6 + Math.random() * answeredCount * 0.3);
+    const correctCount = Math.floor(
+      answeredCount * 0.6 + Math.random() * answeredCount * 0.3,
+    );
 
     return {
       id: section.id,
@@ -50,24 +55,47 @@ export default function ResultsPage() {
       totalQuestions: section.questionCount,
       answeredCount,
       correctCount: Math.min(correctCount, answeredCount),
-      percentage: answeredCount > 0
-        ? Math.round((Math.min(correctCount, answeredCount) / section.questionCount) * 100)
-        : 0,
+      percentage:
+        answeredCount > 0
+          ? Math.round(
+              (Math.min(correctCount, answeredCount) / section.questionCount) *
+                100,
+            )
+          : 0,
     };
   });
 
-  const totalCorrect = sectionResults.reduce((sum, s) => sum + s.correctCount, 0);
-  const totalQuestions = sectionResults.reduce((sum, s) => sum + s.totalQuestions, 0);
-  const totalAnswered = sectionResults.reduce((sum, s) => sum + s.answeredCount, 0);
-  const overallPercentage = totalQuestions > 0
-    ? Math.round((totalCorrect / totalQuestions) * 100)
-    : 0;
+  const totalCorrect = sectionResults.reduce(
+    (sum, s) => sum + s.correctCount,
+    0,
+  );
+  const totalQuestions = sectionResults.reduce(
+    (sum, s) => sum + s.totalQuestions,
+    0,
+  );
+  const totalAnswered = sectionResults.reduce(
+    (sum, s) => sum + s.answeredCount,
+    0,
+  );
+  const overallPercentage =
+    totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0;
 
   const getGrade = (pct: number) => {
-    if (pct >= 90) return { label: 'Excellent', color: 'text-green-600', bg: 'bg-green-50' };
-    if (pct >= 75) return { label: 'Good', color: 'text-blue-600', bg: 'bg-blue-50' };
-    if (pct >= 60) return { label: 'Satisfactory', color: 'text-amber-600', bg: 'bg-amber-50' };
-    return { label: 'Needs Improvement', color: 'text-red-600', bg: 'bg-red-50' };
+    if (pct >= 90)
+      return { label: "Excellent", color: "text-green-600", bg: "bg-green-50" };
+    if (pct >= 75)
+      return { label: "Good", color: "text-blue-600", bg: "bg-blue-50" };
+    if (pct >= 60)
+      return {
+        label: "Satisfactory",
+        color: "text-amber-600",
+        bg: "bg-amber-50",
+      };
+    return {
+      label: "Needs Improvement",
+      color: "text-red-600",
+      bg: "bg-red-50",
+    };
   };
 
   const grade = getGrade(overallPercentage);
@@ -75,20 +103,20 @@ export default function ResultsPage() {
   // Auto-save the results to Supabase when we land on this page
   useEffect(() => {
     if (!hydrated || !userExamId || totalQuestions === 0) return;
-    
+
     // We only trigger this once. If they refresh, this still safely updates
     const saveResults = async () => {
       try {
         await supabase
-          .from('user_exams')
+          .from("user_exams")
           .update({
-            status: 'completed',
+            status: "completed",
             total_score: totalCorrect,
             max_score: totalQuestions,
           })
-          .eq('id', userExamId);
+          .eq("id", userExamId);
       } catch (err) {
-        console.error('Failed to save exam history', err);
+        console.error("Failed to save exam history", err);
       }
     };
     saveResults();
@@ -104,7 +132,7 @@ export default function ResultsPage() {
 
   const handleRetake = () => {
     resetExam();
-    router.push('/dashboard');
+    router.push("/dashboard");
   };
 
   return (
@@ -126,116 +154,89 @@ export default function ResultsPage() {
         </div>
       </header>
 
-      <main className="relative z-10 max-w-3xl mx-auto px-6 py-10">
+      <main className="relative z-10 max-w-6xl mx-auto px-6 py-10">
         {/* Overall Score */}
-        <div className="text-center mb-10">
+        {/* <div className="text-center mb-10">
           <Trophy className="w-12 h-12 text-amber-500 mx-auto mb-4" />
           <h2 className="text-3xl font-bold text-gray-900 mb-2">Exam Complete!</h2>
           <p className="text-gray-500">Here&apos;s your performance summary</p>
-        </div>
+        </div> */}
 
-        {/* Score Ring */}
-        <Card className="border-0 bg-white/80 backdrop-blur-sm shadow-xl mb-8">
-          <CardContent className="pt-8 pb-8">
-            <div className="flex flex-col items-center">
-              {/* Circular Progress */}
-              <div className="relative w-44 h-44 mb-6">
-                <svg className="w-full h-full transform -rotate-90" viewBox="0 0 120 120">
-                  <circle
-                    cx="60" cy="60" r="52"
-                    fill="none"
-                    stroke="#f3f4f6"
-                    strokeWidth="10"
-                  />
-                  <circle
-                    cx="60" cy="60" r="52"
-                    fill="none"
-                    stroke="url(#scoreGradient)"
-                    strokeWidth="10"
-                    strokeLinecap="round"
-                    strokeDasharray={`${2 * Math.PI * 52}`}
-                    strokeDashoffset={`${2 * Math.PI * 52 * (1 - overallPercentage / 100)}`}
-                    className="transition-all duration-1000 ease-out"
-                  />
-                  <defs>
-                    <linearGradient id="scoreGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                      <stop offset="0%" stopColor="#F97316" />
-                      <stop offset="100%" stopColor="#F59E0B" />
-                    </linearGradient>
-                  </defs>
-                </svg>
-                <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <span className="text-4xl font-bold text-gray-900">{overallPercentage}%</span>
-                  <span className={`text-sm font-medium ${grade.color}`}>{grade.label}</span>
+        <div className="relative">
+          {/* Blurred Overlay for Results */}
+          <div className="absolute inset-0 z-20 flex flex-col items-center justify-start pt-16 p-6 text-center bg-white/30 rounded-2xl">
+            <div className="bg-white p-8 rounded-2xl shadow-2xl max-w-2xl w-full border border-orange-100">
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <CheckCircle2 className="w-8 h-8 text-green-600" />
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                Thanks for taking the test!
+              </h3>
+              <p className="text-gray-600 mb-6 leading-relaxed">
+                Your answers have been securely recorded. We will review your
+                test and email your detailed results and score analysis within{" "}
+                <strong>1 day</strong>.
+              </p>
+
+              <div className="bg-orange-50 rounded-xl p-4 text-left shadow-sm border border-orange-100/50">
+                <p className="text-xs font-bold text-orange-800 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                  <Info className="w-4 h-4" /> Contact Information
+                </p>
+                <a
+                  href="mailto:nhat@kni.vn"
+                  className="flex items-center gap-2 text-sm text-orange-700 hover:text-orange-900 transition-colors"
+                >
+                  <Mail className="w-4 h-4 shrink-0" /> nhat@kni.vn
+                </a>
+                <div className="mt-3 space-y-2">
+                  <a
+                    href="tel:+84901234567"
+                    className="flex items-center gap-2 text-sm text-orange-700 hover:text-orange-900 transition-colors"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="w-4 h-4 shrink-0"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      aria-hidden
+                    >
+                      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.86 19.86 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.86 19.86 0 0 1 2.09 4.18 2 2 0 0 1 4 2h3a2 2 0 0 1 2 1.72c.12.9.38 1.76.75 2.58a2 2 0 0 1-.45 2.11L8.91 9.91a16 16 0 0 0 6 6l1.5-1.5a2 2 0 0 1 2.11-.45c.82.37 1.68.63 2.58.75A2 2 0 0 1 22 16.92z" />
+                    </svg>
+                    +84 90 123 4567
+                  </a>
+
+                  <a
+                    href="https://kni.vn"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 text-sm text-orange-700 hover:text-orange-900 transition-colors"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="w-4 h-4 shrink-0"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      aria-hidden
+                    >
+                      <path d="M10 14L21 3" />
+                      <path d="M21 10v-7h-7" />
+                      <path d="M21 21H3V3h7" />
+                    </svg>
+                    kni.vn
+                  </a>
                 </div>
               </div>
 
-              {/* Stats row */}
-              <div className="flex items-center gap-8 text-center">
-                <div>
-                  <div className="flex items-center gap-1.5 text-green-600 mb-1">
-                    <CheckCircle2 className="w-4 h-4" />
-                    <span className="text-2xl font-bold">{totalCorrect}</span>
-                  </div>
-                  <span className="text-xs text-gray-500">Correct</span>
-                </div>
-                <div className="w-px h-10 bg-gray-200" />
-                <div>
-                  <div className="flex items-center gap-1.5 text-red-500 mb-1">
-                    <XCircle className="w-4 h-4" />
-                    <span className="text-2xl font-bold">{totalAnswered - totalCorrect}</span>
-                  </div>
-                  <span className="text-xs text-gray-500">Incorrect</span>
-                </div>
-                <div className="w-px h-10 bg-gray-200" />
-                <div>
-                  <div className="flex items-center gap-1.5 text-gray-400 mb-1">
-                    <Clock className="w-4 h-4" />
-                    <span className="text-2xl font-bold">{totalQuestions - totalAnswered}</span>
-                  </div>
-                  <span className="text-xs text-gray-500">Skipped</span>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Section Breakdown */}
-        <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-          <BarChart3 className="w-5 h-5 text-orange-500" />
-          Section Breakdown
-        </h3>
-
-        <div className="space-y-3 mb-10">
-          {sectionResults.map((result) => (
-            <Card key={result.id} className="border-0 bg-white/70 backdrop-blur-sm shadow-md">
-              <CardContent className="py-4 px-5">
-                <div className="flex items-center justify-between mb-3">
-                  <div>
-                    <p className="font-semibold text-gray-900 text-sm">{result.title}</p>
-                    <p className="text-xs text-gray-500">
-                      {result.correctCount}/{result.totalQuestions} correct · {result.answeredCount} answered
-                    </p>
-                  </div>
-                  <div className={`px-3 py-1 rounded-full text-sm font-bold ${getGrade(result.percentage).bg} ${getGrade(result.percentage).color}`}>
-                    {result.percentage}%
-                  </div>
-                </div>
-                {/* Progress bar */}
-                <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-linear-to-r from-orange-500 to-amber-500 rounded-full transition-all duration-700 ease-out"
-                    style={{ width: `${result.percentage}%` }}
-                  />
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-        {/* Action buttons */}
-        <div className="flex items-center justify-center gap-4">
-          <Button
+              <div className="flex pt-4 items-center justify-center gap-4">
+                {/* <Button
             onClick={handleRetake}
             variant="outline"
             size="lg"
@@ -243,16 +244,120 @@ export default function ResultsPage() {
           >
             <RotateCcw className="w-4 h-4 mr-2" />
             Retake Exam
-          </Button>
-          <Button
-            onClick={() => { resetExam(); router.push('/dashboard'); }}
-            size="lg"
-            className="h-12 px-8 bg-linear-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white shadow-lg shadow-orange-200"
-          >
-            <Home className="w-4 h-4 mr-2" />
-            Back to Dashboard
-          </Button>
+          </Button> */}
+                <Button
+                  onClick={() => {
+                    resetExam();
+                    router.push("/dashboard");
+                  }}
+                  size="lg"
+                  className="h-12 px-8 bg-linear-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white shadow-lg shadow-orange-200"
+                >
+                  <Home className="w-4 h-4 mr-2" />
+                  Back to Dashboard
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          {/* <div className="select-none opacity-30 blur-[6px] pointer-events-none transition-all duration-500 pb-4">
+            <Card className="border-0 bg-white/80 backdrop-blur-sm shadow-xl mb-8">
+              <CardContent className="pt-8 pb-8">
+                <div className="flex flex-col items-center">
+                  <div className="relative w-44 h-44 mb-6">
+                    <svg className="w-full h-full transform -rotate-90" viewBox="0 0 120 120">
+                      <circle
+                        cx="60" cy="60" r="52"
+                        fill="none"
+                        stroke="#f3f4f6"
+                        strokeWidth="10"
+                      />
+                      <circle
+                        cx="60" cy="60" r="52"
+                        fill="none"
+                        stroke="url(#scoreGradient)"
+                        strokeWidth="10"
+                        strokeLinecap="round"
+                        strokeDasharray={`${2 * Math.PI * 52}`}
+                        strokeDashoffset={`${2 * Math.PI * 52 * (1 - overallPercentage / 100)}`}
+                        className="transition-all duration-1000 ease-out"
+                      />
+                      <defs>
+                        <linearGradient id="scoreGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                          <stop offset="0%" stopColor="#F97316" />
+                          <stop offset="100%" stopColor="#F59E0B" />
+                        </linearGradient>
+                      </defs>
+                    </svg>
+                    <div className="absolute inset-0 flex flex-col items-center justify-center">
+                      <span className="text-4xl font-bold text-gray-900">{overallPercentage}%</span>
+                      <span className={`text-sm font-medium ${grade.color}`}>{grade.label}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-8 text-center">
+                    <div>
+                      <div className="flex items-center gap-1.5 text-green-600 mb-1">
+                        <CheckCircle2 className="w-4 h-4" />
+                        <span className="text-2xl font-bold">{totalCorrect}</span>
+                      </div>
+                      <span className="text-xs text-gray-500">Correct</span>
+                    </div>
+                    <div className="w-px h-10 bg-gray-200" />
+                    <div>
+                      <div className="flex items-center gap-1.5 text-red-500 mb-1">
+                        <XCircle className="w-4 h-4" />
+                        <span className="text-2xl font-bold">{totalAnswered - totalCorrect}</span>
+                      </div>
+                      <span className="text-xs text-gray-500">Incorrect</span>
+                    </div>
+                    <div className="w-px h-10 bg-gray-200" />
+                    <div>
+                      <div className="flex items-center gap-1.5 text-gray-400 mb-1">
+                        <Clock className="w-4 h-4" />
+                        <span className="text-2xl font-bold">{totalQuestions - totalAnswered}</span>
+                      </div>
+                      <span className="text-xs text-gray-500">Skipped</span>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <BarChart3 className="w-5 h-5 text-orange-500" />
+              Section Breakdown
+            </h3>
+
+            <div className="space-y-3 mb-10">
+              {sectionResults.map((result) => (
+                <Card key={result.id} className="border-0 bg-white/70 backdrop-blur-sm shadow-md">
+                  <CardContent className="py-4 px-5">
+                    <div className="flex items-center justify-between mb-3">
+                      <div>
+                        <p className="font-semibold text-gray-900 text-sm">{result.title}</p>
+                        <p className="text-xs text-gray-500">
+                          {result.correctCount}/{result.totalQuestions} correct · {result.answeredCount} answered
+                        </p>
+                      </div>
+                      <div className={`px-3 py-1 rounded-full text-sm font-bold ${getGrade(result.percentage).bg} ${getGrade(result.percentage).color}`}>
+                        {result.percentage}%
+                      </div>
+                    </div>
+                    <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-linear-to-r from-orange-500 to-amber-500 rounded-full transition-all duration-700 ease-out"
+                        style={{ width: `${result.percentage}%` }}
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div> */}
         </div>
+
+        {/* Action buttons */}
       </main>
     </div>
   );

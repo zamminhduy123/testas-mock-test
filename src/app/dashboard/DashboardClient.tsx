@@ -550,7 +550,7 @@ export default function DashboardClient() {
                           {exam.status === 'completed' ? (
                             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-bold bg-green-50 text-green-600 border border-green-200">
                               {exam.total_score !== null 
-                                ? `${Math.round((exam.total_score / (exam.max_score || 1)) * 100)}% (${exam.total_score}/${exam.max_score} pts)` 
+                                ? `${Math.round((exam.total_score / (exam.max_score || 1)) * 100)}%` 
                                 : 'Completed'}
                             </span>
                           ) : (
