@@ -55,43 +55,43 @@ export default function FigureSequence({
   };
 
   return (
-    <div className="space-y-8">
-      <div className="flex items-center gap-2">
+    <div className="flex flex-col h-full min-h-0 space-y-4">
+      <div className="flex items-center gap-2 flex-none">
         <span className="text-sm font-semibold text-gray-500 uppercase tracking-wider">
           Complete the sequence
         </span>
       </div>
 
-      <div className="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm flex flex-col items-center justify-center w-full overflow-x-auto">
+      <div className="bg-white rounded-2xl border border-gray-200 p-4 md:p-6 shadow-sm flex flex-col items-center justify-start w-full overflow-y-auto min-h-0 flex-1">
         
         {/* Unified 3-column Grid ensuring perfect vertical alignment everywhere */}
-        <div className="grid grid-cols-[auto_auto_auto] gap-x-4 md:gap-x-8 gap-y-4 items-center w-fit mx-auto">
+        <div className="grid grid-cols-[auto_auto_auto] gap-x-4 md:gap-x-8 gap-y-2 md:gap-y-4 items-center w-fit mx-auto pb-4">
           
           {/* --- ROW 1: HEADERS --- */}
           {/* Main prompt sequence image (Col 1) */}
-          <div className="justify-self-end mr-2 lg:mr-4 mb-8 mt-4">
+          <div className="justify-self-end mr-2 lg:mr-4 mb-4 mt-2">
             <img 
               src={imageUrl} 
               alt="Sequence prompt" 
-              className="h-24 md:h-32 lg:h-[120px] object-contain block ring-1 ring-gray-200" 
+              className="h-20 md:h-28 lg:h-[100px] object-contain block ring-1 ring-gray-200" 
             />
           </div>
 
           {/* Image 1 Header Box (Col 2) */}
-          <div className="w-24 h-24 md:w-32 md:h-32 lg:w-[120px] lg:h-[120px] border-[3px] border-black flex flex-col items-center justify-center bg-white shadow-sm relative mb-8 mt-4">
-            <span className="text-xs md:text-sm font-medium absolute top-2">Image 1</span>
-            <span className="text-4xl md:text-6xl font-light mt-4">?</span>
-            <div className="absolute -bottom-8 flex justify-center w-full">
-              <svg className="w-6 h-6 text-black" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 10.293a1 1 0 010 1.414l-6 6a1 1 0 01-1.414 0l-6-6a1 1 0 111.414-1.414L9 14.586V3a1 1 0 012 0v11.586l4.293-4.293a1 1 0 011.414 0z" clipRule="evenodd"></path></svg>
+          <div className="w-20 h-20 md:w-28 md:h-28 lg:w-[100px] lg:h-[100px] border-[3px] border-black flex flex-col items-center justify-center bg-white shadow-sm relative mb-4 mt-2">
+            <span className="text-xs md:text-sm font-medium absolute top-1">Image 1</span>
+            <span className="text-3xl md:text-5xl font-light mt-2">?</span>
+            <div className="absolute -bottom-6 flex justify-center w-full">
+              <svg className="w-5 h-5 text-black" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 10.293a1 1 0 010 1.414l-6 6a1 1 0 01-1.414 0l-6-6a1 1 0 111.414-1.414L9 14.586V3a1 1 0 012 0v11.586l4.293-4.293a1 1 0 011.414 0z" clipRule="evenodd"></path></svg>
             </div>
           </div>
             
           {/* Image 2 Header Box (Col 3) */}
-          <div className="w-24 h-24 md:w-32 md:h-32 lg:w-[120px] lg:h-[120px] border-[3px] border-black flex flex-col items-center justify-center bg-white shadow-sm relative mb-8 mt-4">
-            <span className="text-xs md:text-sm font-medium absolute top-2">Image 2</span>
-            <span className="text-4xl md:text-6xl font-light mt-4">?</span>
-            <div className="absolute -bottom-8 flex justify-center w-full">
-              <svg className="w-6 h-6 text-black" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 10.293a1 1 0 010 1.414l-6 6a1 1 0 01-1.414 0l-6-6a1 1 0 111.414-1.414L9 14.586V3a1 1 0 012 0v11.586l4.293-4.293a1 1 0 011.414 0z" clipRule="evenodd"></path></svg>
+          <div className="w-20 h-20 md:w-28 md:h-28 lg:w-[100px] lg:h-[100px] border-[3px] border-black flex flex-col items-center justify-center bg-white shadow-sm relative mb-4 mt-2">
+            <span className="text-xs md:text-sm font-medium absolute top-1">Image 2</span>
+            <span className="text-3xl md:text-5xl font-light mt-2">?</span>
+            <div className="absolute -bottom-6 flex justify-center w-full">
+              <svg className="w-5 h-5 text-black" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 10.293a1 1 0 010 1.414l-6 6a1 1 0 01-1.414 0l-6-6a1 1 0 111.414-1.414L9 14.586V3a1 1 0 012 0v11.586l4.293-4.293a1 1 0 011.414 0z" clipRule="evenodd"></path></svg>
             </div>
           </div>
 

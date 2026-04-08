@@ -32,15 +32,24 @@ export default function ExamTopBar({
   ];
 
   return (
-    <div className="bg-linear-to-r from-orange-500 to-amber-500 text-white shadow-lg shadow-orange-200/50 shrink-0 w-full relative">
-      {/* Main top bar row */}
-      <div className="flex items-center justify-between px-4 py-2 gap-4">
+    <div className="bg-linear-to-r from-orange-500 to-amber-500 text-white shadow-lg shadow-orange-200/50 shrink-0 w-full relative z-10">
+      <div className="flex flex-wrap items-center justify-between px-4 py-3 gap-y-4 gap-x-4">
         {/* Left: Timer */}
         <div className="flex items-center gap-3 shrink-0">
           <CircularTimer onTimeUp={onTimeUp} />
           <h2 className="text-sm font-black uppercase tracking-wider text-orange-100 flex items-center">
             {sectionTitle}
           </h2>
+        </div>
+
+        {/* Center: Pagination */}
+        <div className="flex-1 flex justify-center min-w-62.5 order-last xl:order-0 w-full xl:w-auto">
+          <QuestionPagination
+            totalQuestions={totalQuestions}
+            currentIndex={currentQuestionIndex}
+            answeredIndices={answeredQuestions}
+            onQuestionClick={onQuestionClick}
+          />
         </div>
 
         {/* Right: Font size toggle */}
@@ -61,17 +70,6 @@ export default function ExamTopBar({
               {label}
             </button>
           ))}
-        </div>
-      </div>
-      {/* Center: Pagination */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none px-40">
-        <div className="pointer-events-auto">
-          <QuestionPagination
-            totalQuestions={totalQuestions}
-            currentIndex={currentQuestionIndex}
-            answeredIndices={answeredQuestions}
-            onQuestionClick={onQuestionClick}
-          />
         </div>
       </div>
     </div>
