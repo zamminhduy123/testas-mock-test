@@ -104,6 +104,14 @@ export default function ResultsPage() {
   useEffect(() => {
     if (!hydrated || !userExamId || totalQuestions === 0) return;
 
+    // Map answers using section titles instead of section IDs for better readability in the DB
+    const detailedAnswersByTitle = sections.reduce((acc, section) => {
+      const sectionAnswers = answers[section.id] || {};
+      // Convert the question mapping directly into an array of just the recorded answers
+      acc[section.title] = Object.values(sectionAnswers);
+      return acc;
+    }, {} as Record<string, unknown[]>);
+
     // We only trigger this once. If they refresh, this still safely updates
     const saveResults = async () => {
       try {
@@ -113,6 +121,7 @@ export default function ResultsPage() {
             status: "completed",
             total_score: totalCorrect,
             max_score: totalQuestions,
+            detailed_results: detailedAnswersByTitle,
           })
           .eq("id", userExamId);
       } catch (err) {
