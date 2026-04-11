@@ -41,9 +41,8 @@ export default function LoginPage() {
   const handleGoogleLogin = async () => {
     setIsLoading(true);
     try {
-      const appUrl = process.env.NODE_ENV === 'development' 
-        ? 'http://localhost:3000' 
-        : 'https://testas-mock-test.vercel.app';
+      const appUrl =
+        process.env.NEXT_PUBLIC_APP_URL?.trim() || window.location.origin;
 
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
